@@ -25,18 +25,18 @@ function sauvegarde {
 # Effectue une sauvegarde
 
 #1- DEFINITION DE LA SAUVEGARDE COURANTE
-#TODAY_BACKUP="${DST_PTH}${SRC_FLD}_`date -I`"
+#TODAY_BACKUP="${DST_PTH}`date -I`"
 # little change to enable multiple backup per day
-TODAY_BACKUP="${DST_PTH}${SRC_FLD}_`date +%Y-%m-%d_%H-%M-%S`"
-echo "Folder to backup : ${SRC_PTH}${SRC_FLD}"
+TODAY_BACKUP="${DST_PTH}`date +%Y-%m-%d_%H-%M-%S`"
+echo "Folder to backup : ${SRC_PTH}"
 echo "Destination folder : ${TODAY_BACKUP}"
 
 #2- RECHERCHE DE LA DERNIERE SAUVEGARDE
-CMD="ls -1dr ${DST_PTH}${SRC_FLD}_* 2>/dev/null | head -1"
+CMD="ls -1dr ${DST_PTH}*-*-* 2>/dev/null | head -1"
 LAST_BACKUP=$(dst_request "${CMD}")
 if [ -z ${LAST_BACKUP} ]
 then # Pas de sauvegarde anterieure
-  DUMMY_BACKUP="${DST_PTH}${SRC_FLD}_2000-01-01"
+  DUMMY_BACKUP="${DST_PTH}2000-01-01"
   LAST_BACKUP="${DUMMY_BACKUP}"
   dst_request "mkdir $DUMMY_BACKUP 2>/dev/null"
   echo "Last backup : NONE"
@@ -54,9 +54,9 @@ if [ $SIMULATION = 0 ]; then dst_request "mkdir -p $TODAY_BACKUP" ;fi
 OPTIONS="${DRYRUN_OPTION} ${RSYNC_OPTION} -avHh --stats --delete-after --delete-excluded"
 if [ -z ${SERVER_IP} ]
 then # Sauvegarde locale
-  rsync ${OPTIONS} ${EXCLUDE} --link-dest=${LAST_BACKUP} "${SRC_PTH}${SRC_FLD}/" "${TODAY_BACKUP}/"  > ${LOG}
+  rsync ${OPTIONS} ${EXCLUDE} --link-dest=${LAST_BACKUP} "${SRC_PTH}/" "${TODAY_BACKUP}/"  > ${LOG}
 else # Sauvegarde SSH
-  rsync ${OPTIONS} ${EXCLUDE} -e "ssh -i ${RSA_KEY} -p ${PORT}" --link-dest=${LAST_BACKUP} "${SRC_PTH}${SRC_FLD}/" "${LOGIN}@${SERVER_IP}:${TODAY_BACKUP}/"  > ${LOG}
+  rsync ${OPTIONS} ${EXCLUDE} -e "ssh -i ${RSA_KEY} -p ${PORT}" --link-dest=${LAST_BACKUP} "${SRC_PTH}/" "${LOGIN}@${SERVER_IP}:${TODAY_BACKUP}/"  > ${LOG}
 fi
 
 # 4- NETTOYAGE DU LOG
@@ -70,7 +70,7 @@ then # Premiere sauvegarde
   dst_request "rm -rf ${DUMMY_BACKUP}"
 elif [ ${SIMULATION} = 0 ]
 then # Effacement des sauvegardes anterieurs
-  CMD="find ${DST_PTH}${SRC_FLD}_* -maxdepth 0 -type d -ctime +$HOLD"
+  CMD="find ${DST_PTH}*-*-* -maxdepth 0 -type d -ctime +$HOLD"
   OLD_FLD=$(dst_request "${CMD}")
   dst_request "rm -rf ${OLD_FLD}"
   if [ ${OLD_FLD} ]; then
