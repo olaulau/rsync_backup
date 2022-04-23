@@ -12,11 +12,11 @@ SRC_PTH="/path/to/folder/"
 # Folder or file to exclude
 EXCLUDE="--exclude=*_NOBACKUP/"
 
-# Backup destination path
+# Backup destination path  ( ABSOLUTE PATH REQUIRED )
 DST_PTH="/my/backup/folder/"
 
 # Log file (local location only). Tip: You can use on of the above variable for naming.
-LOG="/my/log/folder/rsync_backup.log"
+LOG="${DST_PTH}../rsync_backup.log"
 
 # Rsync additional options ("-avHh --stats --delete-after --delete-excluded" are already native)
 RSYNC_OPTION=""
