@@ -25,7 +25,9 @@ function sauvegarde {
 # Effectue une sauvegarde
 
 #1- DEFINITION DE LA SAUVEGARDE COURANTE
-TODAY_BACKUP="${DST_PTH}${SRC_FLD}_`date -I`"
+#TODAY_BACKUP="${DST_PTH}${SRC_FLD}_`date -I`"
+# little change to enable multiple backup per day
+TODAY_BACKUP="${DST_PTH}${SRC_FLD}_`date +%Y-%m-%d_%H-%M-%S`"
 echo "Folder to backup : ${SRC_PTH}${SRC_FLD}"
 echo "Destination folder : ${TODAY_BACKUP}"
 
